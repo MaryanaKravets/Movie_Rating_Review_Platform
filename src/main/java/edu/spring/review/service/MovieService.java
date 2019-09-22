@@ -1,7 +1,6 @@
 package edu.spring.review.service;
 
 import edu.spring.review.domain.Genre;
-import edu.spring.review.domain.Review;
 import edu.spring.review.dto.MovieDTO;
 import edu.spring.review.dto.RateDTO;
 
@@ -17,7 +16,9 @@ public interface MovieService {
 
     List<MovieDTO> findAll();
 
-    List<Review> findAllReviewByMovieId(Long movieId);
+    List<MovieDTO> findMovieByRateValue(int rate);
+
+    List<MovieDTO> allMoviesByRating();
 
     void saveMovie(MovieDTO movieDTO);
 
@@ -29,7 +30,7 @@ public interface MovieService {
 
     boolean existsMovieById(Long id);
 
-    void addRateToMovie(RateDTO rateDTO);
+    MovieDTO addRateToMovie(RateDTO rateDTO);
 
     List<MovieDTO> getMoviesByCategoryGenre(Genre genre);
 }

@@ -1,6 +1,5 @@
 package edu.spring.review.repository;
 
-import edu.spring.review.domain.Category;
 import edu.spring.review.domain.Genre;
 import edu.spring.review.domain.Movie;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -11,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface MovieRepository extends MongoRepository<Movie,String> {
+public interface MovieRepository extends MongoRepository<Movie, String> {
 
     Optional<Movie> findMovieById(Long id);
 
@@ -23,7 +22,7 @@ public interface MovieRepository extends MongoRepository<Movie,String> {
 
     void deleteMovieById(Long id);
 
-     void deleteMovieByName(String name);
+    void deleteMovieByName(String name);
 
     boolean existsMovieById(Long id);
 
@@ -31,6 +30,5 @@ public interface MovieRepository extends MongoRepository<Movie,String> {
     List<Movie> findMovieByRateValue(int rate);
 
     @Query("{'category.genre': ?0}")
-     List<Movie> getMoviesByCategoryGenre(Genre genre);
-
+    List<Movie> getMoviesByCategoryGenre(Genre genre);
 }

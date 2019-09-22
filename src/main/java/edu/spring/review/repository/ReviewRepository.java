@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ReviewRepository extends MongoRepository<Review,String> {
+public interface ReviewRepository extends MongoRepository<Review, String> {
 
     Optional<Review> findReviewById(Long id);
 

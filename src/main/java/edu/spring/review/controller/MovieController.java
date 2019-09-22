@@ -1,9 +1,7 @@
 package edu.spring.review.controller;
 
-import edu.spring.review.domain.Category;
 import edu.spring.review.domain.Genre;
 import edu.spring.review.domain.Movie;
-import edu.spring.review.domain.Review;
 import edu.spring.review.dto.MovieDTO;
 import edu.spring.review.dto.RateDTO;
 import edu.spring.review.service.MovieService;
@@ -22,79 +20,76 @@ public class MovieController {
     private final MovieService movieService;
 
     @GetMapping("/{id}")
-    public MovieDTO findMovieById(@PathVariable(name = "id") Long id){
+    public MovieDTO findMovieById(@PathVariable(name = "id") Long id) {
 
         return movieService.findMovieById(id);
     }
 
     @GetMapping("/name/{name}")
-    public MovieDTO findMovieByName(@PathVariable(name = "name") String name){
+    public MovieDTO findMovieByName(@PathVariable(name = "name") String name) {
 
         return movieService.findMovieByName(name);
     }
 
     @GetMapping("/director/{director}")
-    public List<MovieDTO> findMovieByDirector(@PathVariable(name = "director") String director){
+    public List<MovieDTO> findMovieByDirector(@PathVariable(name = "director") String director) {
 
         return movieService.findMovieByDirector(director);
     }
 
-//    @GetMapping("/rate/{rate}")
-//    public List<MovieDTO> findMovieByRate(@PathVariable(name = "rate") int rate){
-//
-//        return movieService.findMovieByRateValue(rate);
-//    }
+    @GetMapping("/rate/{rate}")
+    public List<MovieDTO> findMovieByRate(@PathVariable(name = "rate") int rate) {
 
-    @GetMapping("/{movieId}/review")
-    public List<Review> findReviewByMovieId(@PathVariable(name = "movieId") Long movieId){
+        return movieService.findMovieByRateValue(rate);
+    }
 
-        return movieService.findAllReviewByMovieId(movieId);
+    @GetMapping("/rating")
+    public List<MovieDTO> allMoviesByRating() {
+
+        return movieService.allMoviesByRating();
     }
 
     @GetMapping("/all")
-    public List<MovieDTO> findAllMovie(){
+    public List<MovieDTO> findAllMovie() {
 
         return movieService.findAll();
     }
 
     @PostMapping
-    public ResponseEntity<Movie> saveMovie(@RequestBody MovieDTO movieDTO){
+    public ResponseEntity<Movie> saveMovie(@RequestBody MovieDTO movieDTO) {
         movieService.saveMovie(movieDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteMovieById(@PathVariable(name = "id") Long id){
-         movieService.deleteMovieById(id);
+    public ResponseEntity<?> deleteMovieById(@PathVariable(name = "id") Long id) {
+        movieService.deleteMovieById(id);
 
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deleteMovieByName(@RequestParam(name = "name") String name){
-          movieService.deleteMovieByName(name);
+    public ResponseEntity<?> deleteMovieByName(@RequestParam(name = "name") String name) {
+        movieService.deleteMovieByName(name);
 
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping
-    public MovieDTO updateMovie(@RequestBody MovieDTO movieDTO){
+    public MovieDTO updateMovie(@RequestBody MovieDTO movieDTO) {
 
         return movieService.updateMovie(movieDTO);
     }
 
     @PatchMapping("/rate")
-    public ResponseEntity<RateDTO> addRateToMovie(@RequestBody RateDTO rateDTO){
-        movieService.addRateToMovie(rateDTO);
+    public MovieDTO addRateToMovie(@RequestBody RateDTO rateDTO) {
 
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return movieService.addRateToMovie(rateDTO);
     }
 
-
-
     @GetMapping("/category/{genre}")
-    public List<MovieDTO> findMovieByGenre(@PathVariable(name = "genre") Genre genre){
+    public List<MovieDTO> findMovieByGenre(@PathVariable(name = "genre") Genre genre) {
 
         return movieService.getMoviesByCategoryGenre(genre);
     }

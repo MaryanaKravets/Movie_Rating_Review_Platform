@@ -3,7 +3,6 @@ package edu.spring.review.domain;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -17,7 +16,6 @@ public class Rate implements Serializable {
     @Id
     private Long id;
 
-    @DBRef
     @Field("movie_id")
     private Long movieId;
 
@@ -29,9 +27,4 @@ public class Rate implements Serializable {
 
     @Field("rate_value")
     private int rateValue;
-
-    public int executeRateValue(int countOfPositiveVotes, int countOfAllVotes){
-
-        return Math.round(10*(float)(countOfPositiveVotes/countOfAllVotes));
-    }
 }
