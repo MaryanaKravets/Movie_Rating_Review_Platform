@@ -1,6 +1,7 @@
 package edu.spring.review.controller;
 
 import edu.spring.review.domain.Category;
+import edu.spring.review.domain.Genre;
 import edu.spring.review.domain.Movie;
 import edu.spring.review.domain.Review;
 import edu.spring.review.dto.MovieDTO;
@@ -32,23 +33,17 @@ public class MovieController {
         return movieService.findMovieByName(name);
     }
 
-    @GetMapping("/category")
-    public List<MovieDTO> findMovieByCategory(@RequestBody Category category){
-
-        return movieService.findMovieByCategory(category);
-    }
-
     @GetMapping("/director/{director}")
     public List<MovieDTO> findMovieByDirector(@PathVariable(name = "director") String director){
 
         return movieService.findMovieByDirector(director);
     }
 
-    @GetMapping("/rate/{rate}")
-    public List<MovieDTO> findMovieByRate(@PathVariable(name = "rate") int rate){
-
-        return movieService.findMovieByRateValue(rate);
-    }
+//    @GetMapping("/rate/{rate}")
+//    public List<MovieDTO> findMovieByRate(@PathVariable(name = "rate") int rate){
+//
+//        return movieService.findMovieByRateValue(rate);
+//    }
 
     @GetMapping("/{movieId}/review")
     public List<Review> findReviewByMovieId(@PathVariable(name = "movieId") Long movieId){
@@ -94,5 +89,13 @@ public class MovieController {
         movieService.addRateToMovie(rateDTO);
 
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+
+
+    @GetMapping("/category/{genre}")
+    public List<MovieDTO> findMovieByGenre(@PathVariable(name = "genre") Genre genre){
+
+        return movieService.getMoviesByCategoryGenre(genre);
     }
 }

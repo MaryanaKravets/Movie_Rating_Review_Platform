@@ -14,5 +14,7 @@ public enum Genre {
     @JsonProperty("DRAMA")
         DR,
     @JsonProperty("FANTASY")
-        FANT
+        FANT;
+
+     Genre(){}
 }

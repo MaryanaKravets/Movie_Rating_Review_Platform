@@ -3,17 +3,21 @@ package edu.spring.review.domain;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.io.Serializable;
 
 @Data
 @Document(collection = "rating")
 @NoArgsConstructor
-public class Rate {
+public class Rate implements Serializable {
 
     @Id
     private Long id;
 
+    @DBRef
     @Field("movie_id")
     private Long movieId;
 

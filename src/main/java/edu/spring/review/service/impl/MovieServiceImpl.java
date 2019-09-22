@@ -1,9 +1,6 @@
 package edu.spring.review.service.impl;
 
-import edu.spring.review.domain.Category;
-import edu.spring.review.domain.Movie;
-import edu.spring.review.domain.Rate;
-import edu.spring.review.domain.Review;
+import edu.spring.review.domain.*;
 import edu.spring.review.dto.MovieDTO;
 import edu.spring.review.dto.RateDTO;
 import edu.spring.review.exception.Message;
@@ -44,18 +41,6 @@ public class MovieServiceImpl implements MovieService, Message {
     }
 
     @Override
-    public List<MovieDTO> findMovieByCategory(Category category) {
-
-        List<Movie> list= movieRepository.findMovieByCategory(category);
-
-        return list
-                .stream()
-                .map(m->(modelMapper.map(m,MovieDTO.class)))
-                .collect(Collectors.toList());
-//                .sorted(Comparator.comparing(MovieDTO::getRateValue)).collect(Collectors.toList());
-    }
-
-    @Override
     public List<MovieDTO> findMovieByDirector(String director) {
         List<Movie> list=movieRepository.findMovieByDirector(director);
 
@@ -65,17 +50,17 @@ public class MovieServiceImpl implements MovieService, Message {
                 .sorted(Comparator.comparing(m->m.getRate().getRateValue())).collect(Collectors.toList());
     }
 
-    @Override
-    public List<MovieDTO> findMovieByRateValue(int rate) {
-
-        List<Movie> list= movieRepository.findMovieByRateValue(rate);
-        return list
-                .stream()
-                .map(m->(modelMapper.map(m,MovieDTO.class)))
-                .collect(Collectors.toList());
-             //   .stream()
-              //  .sorted(Comparator.comparing(m->m.getRate().getRateValue())).collect(Collectors.toList());
-    }
+//    @Override
+//    public List<MovieDTO> findMovieByRateValue(int rate) {
+//
+//        List<Movie> list= movieRepository.findMovieByRateValue(rate);
+//        return list
+//                .stream()
+//                .map(m->(modelMapper.map(m,MovieDTO.class)))
+//                .collect(Collectors.toList());
+//             //   .stream()
+//              //  .sorted(Comparator.comparing(m->m.getRate().getRateValue())).collect(Collectors.toList());
+//    }
 
     @Override
     public List<MovieDTO> findAll() {
@@ -141,5 +126,16 @@ public class MovieServiceImpl implements MovieService, Message {
         rate.setRateValue(rate.executeRateValue(countPosVotes,countVotes));
         movie.setRate(rate);
         movieRepository.save(movie);
+    }
+
+    @Override
+    public List<MovieDTO> getMoviesByCategoryGenre(Genre genre) {
+        List<Movie> list= movieRepository.getMoviesByCategoryGenre(genre);
+
+        return list
+                .stream()
+                .map(m->(modelMapper.map(m,MovieDTO.class)))
+                .collect(Collectors.toList());
+//                .sorted(Comparator.comparing(MovieDTO::getRateValue)).collect(Collectors.toList());;
     }
 }

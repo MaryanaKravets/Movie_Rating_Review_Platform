@@ -1,6 +1,7 @@
 package edu.spring.review.domain;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -9,6 +10,7 @@ import java.io.Serializable;
 
 @Data
 @Document("reviews")
+@NoArgsConstructor
 public class Review implements Serializable {
 
     @Id
