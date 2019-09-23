@@ -2,7 +2,6 @@ package edu.spring.review.service.impl;
 
 import edu.spring.review.domain.*;
 import edu.spring.review.dto.MovieDTO;
-import edu.spring.review.dto.RateDTO;
 import edu.spring.review.exception.Message;
 import edu.spring.review.exception.NotFoundException;
 import edu.spring.review.repository.MovieRepository;
@@ -113,14 +112,14 @@ public class MovieServiceImpl implements MovieService, Message {
     }
 
     @Override
-    public MovieDTO addRateToMovie(RateDTO rateDTO) {
+    public MovieDTO addRateToMovie(Long movieId, boolean isLiked) {
 
-        Movie movie = movieRepository.findMovieById(rateDTO.getMovieId())
-                .orElseThrow(() -> new NotFoundException(String.format(MOVIE_NOT_FOUND, rateDTO.getMovieId())));
+        Movie movie = movieRepository.findMovieById(movieId)
+                .orElseThrow(() -> new NotFoundException(String.format(MOVIE_NOT_FOUND, movieId)));
         Rate rate = movie.getRate();
         int countVotes = rate.getCountOfAllVotes();
         int countPosVotes = rate.getCountOfPositiveVotes();
-        if (rateDTO.isLiked()) {
+        if (isLiked) {
             countPosVotes++;
         }
         int i = Math.round((float) ((10 * countPosVotes) / (countVotes + 1)));

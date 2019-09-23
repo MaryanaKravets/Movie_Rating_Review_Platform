@@ -2,7 +2,6 @@ package edu.spring.review.service;
 
 import edu.spring.review.domain.Genre;
 import edu.spring.review.dto.MovieDTO;
-import edu.spring.review.dto.RateDTO;
 
 import java.util.List;
 
@@ -30,7 +29,7 @@ public interface MovieService {
 
     boolean existsMovieById(Long id);
 
-    MovieDTO addRateToMovie(RateDTO rateDTO);
+    MovieDTO addRateToMovie(Long movieId,boolean isLiked);
 
     List<MovieDTO> getMoviesByCategoryGenre(Genre genre);
 }

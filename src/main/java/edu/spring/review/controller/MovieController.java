@@ -3,7 +3,6 @@ package edu.spring.review.controller;
 import edu.spring.review.domain.Genre;
 import edu.spring.review.domain.Movie;
 import edu.spring.review.dto.MovieDTO;
-import edu.spring.review.dto.RateDTO;
 import edu.spring.review.service.MovieService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -82,10 +81,11 @@ public class MovieController {
         return movieService.updateMovie(movieDTO);
     }
 
-    @PatchMapping("/rate")
-    public MovieDTO addRateToMovie(@RequestBody RateDTO rateDTO) {
+    @PatchMapping("/rate/{movieId}")
+    public MovieDTO addRateToMovie(@PathVariable(name = "movieId") Long movieId,
+                                   @RequestParam boolean isLiked) {
 
-        return movieService.addRateToMovie(rateDTO);
+        return movieService.addRateToMovie(movieId,isLiked);
     }
 
     @GetMapping("/category/{genre}")
