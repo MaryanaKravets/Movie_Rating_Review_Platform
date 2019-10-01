@@ -7,11 +7,11 @@ import java.util.List;
 
 public interface ReviewService {
 
-    Review findReviewById(Long id);
+    Review getReviewById(Long id);
 
     List<Review> findReviewByMovieId(Long movieId);
 
-    Review findReviewByIdAndMovieId(Long id, Long movieId);
+    Review getReviewByIdAndMovieId(Long id, Long movieId);
 
     void deleteReviewById(Long id);
 

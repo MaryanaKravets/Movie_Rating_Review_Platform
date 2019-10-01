@@ -1,6 +1,8 @@
 package edu.spring.review.service.impl;
 
-import edu.spring.review.domain.*;
+import edu.spring.review.domain.Genre;
+import edu.spring.review.domain.Movie;
+import edu.spring.review.domain.Rate;
 import edu.spring.review.dto.MovieDTO;
 import edu.spring.review.exception.Message;
 import edu.spring.review.exception.NotFoundException;
@@ -23,30 +25,31 @@ public class MovieServiceImpl implements MovieService, Message {
 
 
     @Override
-    public MovieDTO findMovieById(Long id) {
+    public MovieDTO getMovieById(Long id) {
         Movie movie =
                 movieRepository.findMovieById(id)
-                        .orElseThrow(() -> new NotFoundException(String.format(MOVIE_NOT_FOUND, id)));
+                        .orElseThrow(() -> new NotFoundException(String.format(MOVIE_NOT_FOUND_EXCEPTION_MESSAGE, id)));
 
-        return modelMapper.map(movie, MovieDTO.class);
+        return convertToDto(movie);
     }
 
     @Override
-    public MovieDTO findMovieByName(String name) {
+    public MovieDTO getMovieByName(String name) {
         Movie movie = movieRepository.findMovieByName(name)
-                .orElseThrow(() -> new NotFoundException(String.format(MOVIE_NAME_NOT_FOUND, name)));
+                .orElseThrow(() -> new NotFoundException(String.format(MOVIE_NAME_NOT_FOUND_EXCEPTION_MESSAGE, name)));
 
-        return modelMapper.map(movie, MovieDTO.class);
+        return convertToDto(movie);
     }
 
     @Override
     public List<MovieDTO> findMovieByDirector(String director) {
-        List<Movie> list = movieRepository.findMovieByDirector(director);
+        List<Movie> movieList = movieRepository.findMovieByDirector(director);
 
-        return list
+        return movieList
                 .stream()
-                .map(m -> (modelMapper.map(m, MovieDTO.class)))
-                .sorted(Comparator.comparing(MovieDTO::getRateValue)).collect(Collectors.toList());
+                .map(this::convertToDto)
+                .sorted(Comparator.comparing(MovieDTO::getRateValue))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -55,7 +58,7 @@ public class MovieServiceImpl implements MovieService, Message {
         List<Movie> list = movieRepository.findMovieByRateValue(rate);
         return list
                 .stream()
-                .map(m -> (modelMapper.map(m, MovieDTO.class)))
+                .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
@@ -64,7 +67,7 @@ public class MovieServiceImpl implements MovieService, Message {
 
         return movieRepository.findAll()
                 .stream()
-                .map(m -> (modelMapper.map(m, MovieDTO.class)))
+                .map(this::convertToDto)
                 .sorted(Comparator.comparing(MovieDTO::getRateValue).reversed())
                 .collect(Collectors.toList());
     }
@@ -72,13 +75,14 @@ public class MovieServiceImpl implements MovieService, Message {
     @Override
     public List<MovieDTO> findAll() {
 
-        return movieRepository.findAll().stream().map(m -> (modelMapper.map(m, MovieDTO.class)))
+        return movieRepository.findAll().stream()
+                .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public void saveMovie(MovieDTO movieDTO) {
-        Movie movie = modelMapper.map(movieDTO, Movie.class);
+        Movie movie =convertToEntity(movieDTO);
         movieRepository.save(movie);
     }
 
@@ -96,14 +100,13 @@ public class MovieServiceImpl implements MovieService, Message {
     @Override
     public MovieDTO updateMovie(MovieDTO movieDTO) {
 
-        return movieRepository.findMovieById(movieDTO.getId()).map(m -> {
-            m.setName(movieDTO.getName());
-            m.setCategory(movieDTO.getCategory());
-            m.setShortDescription(movieDTO.getShortDescription());
-            m.setDirector(movieDTO.getDirector());
-            movieRepository.save(m);
-            return movieDTO;
-        }).orElseThrow(() -> new NotFoundException(String.format(MOVIE_NOT_FOUND, movieDTO.getId())));
+        Movie movie = movieRepository.findMovieById(movieDTO.getId())
+                .orElseThrow(() -> new NotFoundException(String.format(MOVIE_NOT_FOUND_EXCEPTION_MESSAGE, movieDTO.getId())));
+
+        movieDTO.setId(movie.getId());
+        movieRepository.save(convertToEntity(movieDTO));
+
+        return movieDTO;
     }
 
     @Override
@@ -115,21 +118,19 @@ public class MovieServiceImpl implements MovieService, Message {
     public MovieDTO addRateToMovie(Long movieId, boolean isLiked) {
 
         Movie movie = movieRepository.findMovieById(movieId)
-                .orElseThrow(() -> new NotFoundException(String.format(MOVIE_NOT_FOUND, movieId)));
+                .orElseThrow(() -> new NotFoundException(String.format(MOVIE_NOT_FOUND_EXCEPTION_MESSAGE, movieId)));
         Rate rate = movie.getRate();
         int countVotes = rate.getCountOfAllVotes();
         int countPosVotes = rate.getCountOfPositiveVotes();
         if (isLiked) {
             countPosVotes++;
         }
-        int i = Math.round((float) ((10 * countPosVotes) / (countVotes + 1)));
-        rate.setRateValue(i);
-        rate.setCountOfPositiveVotes(countPosVotes);
-        rate.setCountOfAllVotes(countVotes + 1);
+        int i = executeRate(countVotes, countPosVotes);
+        setRate(rate, countVotes + 1, countPosVotes, i);
         movie.setRate(rate);
         movieRepository.save(movie);
 
-        return modelMapper.map(movie, MovieDTO.class);
+        return convertToDto(movie);
     }
 
     @Override
@@ -138,7 +139,33 @@ public class MovieServiceImpl implements MovieService, Message {
 
         return list
                 .stream()
-                .map(m -> (modelMapper.map(m, MovieDTO.class)))
+                .map(this::convertToDto)
                 .collect(Collectors.toList());
+    }
+
+    private void setRate(Rate rate, int countOfAllVotes, int countOfPositiveVotes, int rateValue) {
+        rate.setRateValue(rateValue);
+        rate.setCountOfPositiveVotes(countOfPositiveVotes);
+        rate.setCountOfAllVotes(countOfAllVotes);
+    }
+
+    private int executeRate(int countOfAllVotes, int countOfPositiveVotes) {
+        int limitOfRating = 10;
+
+        return Math.round((float) ((limitOfRating * countOfPositiveVotes) / (countOfAllVotes + 1)));
+    }
+
+
+
+    private MovieDTO convertToDto(Movie movie){
+        MovieDTO movieDTO=modelMapper.map(movie,MovieDTO.class);
+        movieDTO.setCategory(movie.getCategory().getGenre().getGenreValue());
+        return movieDTO;
+    }
+
+    private Movie convertToEntity(MovieDTO movieDTO){
+        Movie movie=modelMapper.map(movieDTO,Movie.class);
+       movie.getCategory().setGenre(Genre.fromString(movieDTO.getCategory()));
+        return movie;
     }
 }

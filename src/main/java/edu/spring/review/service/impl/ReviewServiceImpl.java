@@ -4,7 +4,6 @@ import edu.spring.review.domain.Review;
 import edu.spring.review.exception.Message;
 import edu.spring.review.exception.NotFoundException;
 import edu.spring.review.repository.ReviewRepository;
-import edu.spring.review.service.MovieService;
 import edu.spring.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,13 +15,12 @@ import java.util.List;
 public class ReviewServiceImpl implements ReviewService, Message {
 
     private final ReviewRepository reviewRepository;
-    private final MovieService movieService;
 
     @Override
-    public Review findReviewById(Long id) {
+    public Review getReviewById(Long id) {
 
         return reviewRepository.findReviewById(id)
-                .orElseThrow(() -> new NotFoundException(String.format(REVIEW_NOT_FOUND, id)));
+                .orElseThrow(() -> new NotFoundException(String.format(REVIEW_NOT_FOUND_EXCEPTION_MESSAGE, id)));
     }
 
     @Override
@@ -32,10 +30,10 @@ public class ReviewServiceImpl implements ReviewService, Message {
     }
 
     @Override
-    public Review findReviewByIdAndMovieId(Long id, Long movieId) {
+    public Review getReviewByIdAndMovieId(Long id, Long movieId) {
 
         return reviewRepository.findReviewByIdAndMovieId(id, movieId)
-                .orElseThrow(() -> new NotFoundException(String.format(MOVIE_REVIEW_NOT_FOUND, movieId, id)));
+                .orElseThrow(() -> new NotFoundException(String.format(MOVIE_REVIEW_NOT_FOUND_EXCEPTION_MESSAGE, movieId, id)));
     }
 
     @Override
@@ -48,16 +46,14 @@ public class ReviewServiceImpl implements ReviewService, Message {
     public Review editReview(Review review) {
         Long movieId = review.getMovieId();
         Long reviewId = review.getId();
-        if (!movieService.existsMovieById(movieId)) {
-            throw new NotFoundException(String.format(MOVIE_NOT_FOUND, movieId));
-        }
-        return reviewRepository.findReviewByIdAndMovieId(reviewId, movieId)
-                .map(r -> {
-                    r.setReviewMessage(review.getReviewMessage());
-                    r.setLiked(true);
-                    return reviewRepository.save(review);
-                })
-                .orElseThrow(() -> new NotFoundException(String.format(REVIEW_NOT_FOUND, reviewId)));
+
+        Review review1 = reviewRepository.findReviewByIdAndMovieId(reviewId, movieId)
+                .orElseThrow(() -> new NotFoundException(String.format(MOVIE_REVIEW_NOT_FOUND_EXCEPTION_MESSAGE, movieId, reviewId)));
+
+        review1.setReviewMessage(review.getReviewMessage());
+        review1.setLiked(review.isLiked());
+
+        return reviewRepository.save(review1);
     }
 
     @Override

@@ -19,15 +19,15 @@ public class MovieController {
     private final MovieService movieService;
 
     @GetMapping("/{id}")
-    public MovieDTO findMovieById(@PathVariable(name = "id") Long id) {
+    public MovieDTO getMovieById(@PathVariable(name = "id") Long id) {
 
-        return movieService.findMovieById(id);
+        return movieService.getMovieById(id);
     }
 
     @GetMapping("/name/{name}")
-    public MovieDTO findMovieByName(@PathVariable(name = "name") String name) {
+    public MovieDTO getMovieByName(@PathVariable(name = "name") String name) {
 
-        return movieService.findMovieByName(name);
+        return movieService.getMovieByName(name);
     }
 
     @GetMapping("/director/{director}")
@@ -81,15 +81,15 @@ public class MovieController {
         return movieService.updateMovie(movieDTO);
     }
 
-    @PatchMapping("/rate/{movieId}")
+    @PatchMapping("/{movieId}/rate")
     public MovieDTO addRateToMovie(@PathVariable(name = "movieId") Long movieId,
                                    @RequestParam boolean isLiked) {
 
         return movieService.addRateToMovie(movieId,isLiked);
     }
 
-    @GetMapping("/category/{genre}")
-    public List<MovieDTO> findMovieByGenre(@PathVariable(name = "genre") Genre genre) {
+    @GetMapping
+    public List<MovieDTO> findMovieByGenre(@RequestParam(name = "genre") Genre genre) {
 
         return movieService.getMoviesByCategoryGenre(genre);
     }

@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface MovieService {
 
-    MovieDTO findMovieById(Long id);
+    MovieDTO getMovieById(Long id);
 
-    MovieDTO findMovieByName(String name);
+    MovieDTO getMovieByName(String name);
 
     List<MovieDTO> findMovieByDirector(String director);
 

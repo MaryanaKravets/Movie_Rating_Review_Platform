@@ -18,9 +18,9 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @GetMapping("/{id}")
-    public Review findReviewById(@PathVariable(name = "id") Long id) {
+    public Review getReviewById(@PathVariable(name = "id") Long id) {
 
-        return reviewService.findReviewById(id);
+        return reviewService.getReviewById(id);
     }
 
     @GetMapping("/movie/{movieId}")
